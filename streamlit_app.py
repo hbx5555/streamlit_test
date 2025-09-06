@@ -1,11 +1,9 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 from utils.data_helpers import (
     load_data, 
     process_data, 
-    generate_summary_stats,
-    create_visualization_data
+    generate_summary_stats
 )
 from utils.api_clients import APIClient
 import os
@@ -35,7 +33,10 @@ def render_sidebar() -> str:
     """Render sidebar and return selected page"""
     with st.sidebar:
         st.title("Navigation")
-        page = st.radio("Choose a page", ["Data Upload", "Analysis", "Visualization", "API Integration"])
+        page = st.radio(
+            "Choose a page",
+            ["Upload", "Analysis", "API Data"]
+        )
         
         if st.session_state.data is not None:
             st.subheader("Data Filters")
@@ -100,84 +101,11 @@ def render_analysis_page():
     else:
         st.info("No numeric columns found in the data")
     
-    st.subheader("Categorical Column Distribution")
     if stats['categorical_summary']:
-        for col, dist in stats['categorical_summary'].items():
-            st.write(f"**{col}**")
-            st.bar_chart(dist)
+        st.info(f"Found {len(stats['categorical_summary'])} categorical columns")
     else:
         st.info("No categorical columns found in the data")
 
-def render_visualization_page():
-    """Render data visualization page"""
-    if st.session_state.data is None:
-        st.warning("Please upload data first!")
-        return
-    
-    st.header("Data Visualization")
-    
-    # Visualization options
-    viz_type = st.selectbox(
-        "Select visualization type",
-        ["scatter", "line", "bar", "histogram"]
-    )
-    
-    cols = st.session_state.data.columns.tolist()
-    x_col = st.selectbox("Select X-axis column", cols)
-    
-    y_col = None
-    if viz_type in ['scatter', 'line']:
-        y_col = st.selectbox("Select Y-axis column", cols)
-    
-    group_by = st.selectbox(
-        "Group by (optional)",
-        ["None"] + cols
-    )
-    
-    # Create visualization
-    try:
-        plot_data = create_visualization_data(
-            st.session_state.data,
-            viz_type,
-            x_col,
-            y_col,
-            group_by if group_by != "None" else None
-        )
-        
-        if viz_type == 'scatter':
-            fig = px.scatter(
-                plot_data,
-                x='x',
-                y='y',
-                color='color' if 'color' in plot_data else None,
-                title=f"{viz_type.capitalize()} Plot"
-            )
-        elif viz_type == 'line':
-            fig = px.line(
-                plot_data,
-                x='x',
-                y='y',
-                color='color' if 'color' in plot_data else None,
-                title=f"{viz_type.capitalize()} Plot"
-            )
-        elif viz_type == 'bar':
-            fig = px.bar(
-                plot_data,
-                x=x_col,
-                y='count' if 'count' in plot_data else y_col,
-                title=f"{viz_type.capitalize()} Plot"
-            )
-        else:  # histogram
-            fig = px.histogram(
-                plot_data,
-                x='x',
-                title=f"{viz_type.capitalize()} Plot"
-            )
-        
-        st.plotly_chart(fig, use_container_width=True)
-        
-    except Exception as e:
-        st.error(f"Error creating visualization: {str(e)}")
 
 def render_api_page():
     """Render API integration page"""
@@ -230,13 +158,11 @@ def main():
     """Main application entry point"""
     page = render_sidebar()
     
-    if page == "Data Upload":
+    if page == "Upload":
         render_upload_page()
     elif page == "Analysis":
         render_analysis_page()
-    elif page == "Visualization":
-        render_visualization_page()
-    else:  # API Integration
+    else:  # API Data
         render_api_page()
 
 if __name__ == "__main__":
