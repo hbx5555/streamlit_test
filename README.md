@@ -1,12 +1,11 @@
 # Data Analysis Dashboard
 
-A modern data analysis dashboard built with Streamlit, featuring data upload, analysis, visualization, and API integration capabilities.
+A modern data analysis dashboard built with Streamlit, featuring data upload, analysis, and API integration capabilities.
 
 ## Features
 
 - **Data Upload**: Support for CSV and Excel files
 - **Data Analysis**: Interactive data exploration with summary statistics
-- **Data Visualization**: Multiple chart types (scatter, line, bar, histogram)
 - **API Integration**: Connect and fetch data from external APIs
 - **Modern UI**: Clean, responsive interface
 - **Performance Optimized**: Caching for data operations and API calls
@@ -61,13 +60,8 @@ streamlit run streamlit_app.py
 ### Analysis
 - Switch to "Analysis" page
 - View summary statistics
-- Explore numeric and categorical distributions
-
-### Visualization
-- Go to "Visualization" page
-- Choose visualization type
-- Select data columns for axes
-- Optional grouping for enhanced insights
+- Explore numeric column statistics
+- View categorical column counts
 
 ### API Integration
 - Access "API Integration" page
@@ -92,7 +86,6 @@ git push heroku main
 - streamlit==1.27.0
 - pandas==2.1.0
 - numpy==1.24.3
-- plotly==5.16.1
 - requests==2.31.0
 - python-dotenv==1.0.0
 - openpyxl==3.1.2
